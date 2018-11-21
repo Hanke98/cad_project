@@ -1,0 +1,3 @@
+project(CAD_Project)
+aux_source_directory(. DIR_SRCS)
+add_library(COMMON ${DIR_SRCS})
