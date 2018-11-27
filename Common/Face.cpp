@@ -8,7 +8,8 @@
 Face::Face() :
     prev_f(nullptr),
     next_f(nullptr),
-    floops(nullptr)
+    floops(nullptr),
+    num_of_inner_loop(1)
 {}
 
 Face::~Face() {
@@ -49,4 +50,22 @@ void Face::setFsolid(Solid *fsolid) {
     if (Face::fsolid)
         delete(fsolid);
     Face::fsolid = fsolid;
+}
+
+int Face::GetNum_of_inner_loop() const {
+    return num_of_inner_loop;
+}
+
+void Face::SetNum_of_inner_loop(int num_of_inner_loop) {
+    Face::num_of_inner_loop = num_of_inner_loop;
+}
+
+void Face::AddInnerLoop(Loop *&l) {
+    Loop * loop = floops;
+    while(loop->getNext_l()) {
+        loop = loop->getNext_l();
+    }
+    loop->setNext_l(l);
+    l->setPrev_l(loop);
+    num_of_inner_loop += 1;
 }

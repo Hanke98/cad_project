@@ -15,7 +15,7 @@ class HalfEdge {
 public:
     HalfEdge();
 
-    HalfEdge(Vertex *vtx);
+    HalfEdge(Vertex *vtx, Vertex *end_v);
 
     virtual ~HalfEdge();
 
@@ -35,16 +35,19 @@ public:
 
     void setWloop(Loop *wloop);
 
-    Vertex *getVtx() const;
+    Vertex *getStart_v() const;
 
     void setVtx(Vertex *vtx);
+
+    Vertex *getEnd_v() const;
 
 private:
     HalfEdge *next_he;
     HalfEdge *prev_he;
     Edge *edg;
     Loop *wloop;
-    Vertex *vtx;
+    Vertex *start_v;
+    Vertex *end_v;
 
 };
 

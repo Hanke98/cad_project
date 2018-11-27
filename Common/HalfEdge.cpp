@@ -11,7 +11,7 @@ HalfEdge::HalfEdge() :
         prev_he(nullptr),
         wloop(nullptr),
         edg(nullptr),
-        vtx(nullptr)
+        start_v(nullptr)
 {}
 
 HalfEdge::~HalfEdge() {
@@ -50,18 +50,23 @@ void HalfEdge::setWloop(Loop *wloop) {
     HalfEdge::wloop = wloop;
 }
 
-Vertex *HalfEdge::getVtx() const {
-    return vtx;
+Vertex *HalfEdge::getStart_v() const {
+    return start_v;
 }
 
 void HalfEdge::setVtx(Vertex *vtx) {
-    HalfEdge::vtx = vtx;
+    HalfEdge::start_v = vtx;
 }
 
-HalfEdge::HalfEdge(Vertex *vtx) :
+HalfEdge::HalfEdge(Vertex *vtx, Vertex *end_v) :
         next_he(nullptr),
         prev_he(nullptr),
         wloop(nullptr),
         edg(nullptr),
-        vtx(vtx)
+        start_v(vtx),
+        end_v(end_v)
 {}
+
+Vertex *HalfEdge::getEnd_v() const {
+    return end_v;
+}

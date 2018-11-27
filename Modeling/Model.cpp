@@ -42,6 +42,15 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
             operands_q.pop_front();
             continue;
         }
+        if (op == KEMR) {
+            Vertex *v0 = vertexes[operands_q[0]];
+            Vertex *v1 = vertexes[operands_q[1]];
+            loop = EularOperation::kemr(v0, v1, loop);
+            operands_q.pop_front();
+            operands_q.pop_front();
+            continue;
+        }
+
 
     }
 
@@ -51,13 +60,14 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
     }
 
     loop = solid->getSfaces()->getFloops();
-    while(loop) {
+    while (loop) {
         he = loop->getLedg();
-        while(he->getNext_he() != loop->getLedg()) {
-            he->getVtx()->PrintPos();
+        while (he->getNext_he() != loop->getLedg()) {
+            he->getStart_v()->PrintPos();
             he = he->getNext_he();
         }
-        he->getVtx()->PrintPos();
+//        std::cout << "\n";
+        he->getStart_v()->PrintPos();
         loop = loop->getNext_l();
         std::cout << "\n";
     }

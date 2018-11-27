@@ -13,6 +13,7 @@ public:
     static Solid *mvsf(Vertex *&v);
     static HalfEdge *mev(Vertex *&v1, Vertex *&v2, Loop *&l);
     static Face *mef(Vertex *&v1, Vertex *&v2, Loop *&l);
+    static Loop *kemr(Vertex *&v1, Vertex *&v2, Loop *&l);
 //    static Face *kemr(Vertex *&v1);
 };
 

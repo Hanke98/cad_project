@@ -47,6 +47,10 @@ std::vector<int> Files::ReadOperators(std::string op_path, std::deque<int> &oper
             ReadOperands(MEF, file, op_order, operands_q);
             continue;
         }
+        if (op.find("kemr") != std::string::npos) {
+            ReadOperands(KEMR, file, op_order, operands_q);
+            continue;
+        }
     }
     return op_order;
 }
