@@ -64,7 +64,7 @@ void Solid::AddFaces(Face *f) {
     tf->setNext_f(f);
 }
 
-int Solid::getNumOfFaces() {
+int Solid::getNumOfFaces() const {
     return static_cast<int>(faces.size());
 }
 

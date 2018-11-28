@@ -5,12 +5,12 @@
 #include "Model.h"
 #include "../EularOperation/EularOperation.h"
 
-Model::Model() {}
+Model::Model() : solid(nullptr) {}
 
 void Model::BuildSolid(std::string vtx_path, std::string op_path) {
     vertexes = Files::ReadVertexs(vtx_path);
     operands_order = Files::ReadOperators(op_path, operands_q);
-    Solid *solid = nullptr;
+//    solid = nullptr;
     Loop *loop = nullptr;
     HalfEdge *he = nullptr;
     if (operands_order[0] != MVSF) {
@@ -70,7 +70,7 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
 
     int num_of_face = solid->getNumOfFaces();
     auto face_vector = solid->GetFaces();
-    for( int face_order =0 ;face_order < num_of_face; face_order ++) {
+    for (int face_order = 0; face_order < num_of_face; face_order++) {
         std::cout << "face " << face_order << ": " << std::endl;
         auto *cur_face = face_vector[face_order];
         loop = cur_face->getFloops();
@@ -79,7 +79,7 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
             int i = 0;
             while (i < loop->GetNum_of_he()) {
                 assert(he);
-                std::cout << "he " << ++i << ": " <<  std::endl;
+                std::cout << "he " << ++i << ": " << std::endl;
                 he->getStart_v()->PrintPos();
                 he->getEnd_v()->PrintPos();
                 he = he->getNext_he();
@@ -90,4 +90,8 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
         std::cout << "=========\n";
     }
 
+}
+
+const Solid *Model::GetSolid() const {
+    return solid;
 }

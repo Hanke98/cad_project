@@ -36,7 +36,7 @@ public:
 
     void AddFaces(Face *f);
 
-    int getNumOfFaces();
+    int getNumOfFaces() const;
 
     const std::vector<Face *> &GetFaces() const;
 

@@ -40,12 +40,17 @@ public:
 
     void PrintLoop();
 
+    int GetIdx() const;
+
+    void SetIdx(int idx);
+
 private:
     Loop *prev_l;
     Loop *next_l;
     HalfEdge *ledg;
     Face *lface;
     int num_of_he;
+    int idx; // for rendering
 };
 
 

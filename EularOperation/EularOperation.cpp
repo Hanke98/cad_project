@@ -180,18 +180,10 @@ void EularOperation::Sweep(Vertex *&v1, Vertex *&v2, Face *f) {
             new_up = new Vertex(next_v->getPos() + d);
             partner_loop = he->GetPartner()->getWloop();
             mev(next_v, new_up, partner_loop);
-//            std::cout << "before mef partner loop:" << std::endl;
-//            partner_loop->PrintLoop();
-
             auto *new_f = mef(new_up, pre_up, partner_loop);
-//            std::cout << "after mef new loop:" << std::endl;
-//            new_f->getFloops()->PrintLoop();
-//            std::cout << "after mef" << std::endl;
-//            partner_loop->PrintLoop();
             he = he->getNext_he();
             pre_up = new_up;
         }
-        //partner_loop->PrintLoop();
         mef(pre_up, pre_up_back, partner_loop);
 
         l = l->getNext_l();

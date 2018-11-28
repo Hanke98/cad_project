@@ -16,10 +16,13 @@ public:
 
     void BuildSolid(std::string vtx_path, std::string op_path);
 
+    const Solid *GetSolid() const;
+
 private:
     std::vector<Vertex *> vertexes;
     std::deque<int> operands_q;
     std::vector<int> operands_order;
+    Solid *solid;
 
 };
 

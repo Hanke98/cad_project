@@ -12,7 +12,7 @@ Loop::Loop() :
         next_l(nullptr),
         ledg(nullptr),
         lface(nullptr),
-        num_of_he(0) {}
+        num_of_he(0), idx(0) {}
 
 Loop::~Loop() {
 
@@ -88,4 +88,12 @@ void Loop::PrintLoop() {
         std::cout << "====" << std::endl;
         he = he->getNext_he();
     }
+}
+
+int Loop::GetIdx() const {
+    return idx;
+}
+
+void Loop::SetIdx(int idx) {
+    Loop::idx = idx;
 }

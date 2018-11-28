@@ -15,8 +15,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
 #include "Camera.h"
-//#include "../Common/Mesh.h"
-#include "../Common/MeshData.h"
+#include "../Common/Solid.h"
+#include <vector>
 
 class Render {
 
@@ -25,23 +25,21 @@ public:
 
     void Init();
 
-    void InitShader(std::string v_glsl, std::string f_glsl);
-
     void Display(GLuint prog_id = 0);
 
     void InsertVAO(int vao);
 
     void InsertVBO(int vbo);
 
-    void InsertMeshData(MeshData &md);
-
-    void InsertMeshData(GLuint _vao, GLuint _vbo, glm::mat4 *_mm_ptr, size_t _num_of_vertex);
-
     bool DisplayOneFrame(GLuint prog_id);
 
-    void ClearMeshData();
+    void DrawMesh();
+
+    void InitSolidData(const Solid *&solid);
 
 protected:
+
+    void InitShader(std::string v_glsl, std::string f_glsl);
 
     GLuint LoadShader(const char *vertex_file_path, const char *fragment_file_path);
 
@@ -55,8 +53,6 @@ protected:
 
     void ProcessInput();
 
-    void DrawMesh();
-
     void DrawFloor();
 
     void InitFloor();
@@ -68,8 +64,6 @@ private:
     std::vector<GLuint> VAOs;
     std::vector<GLuint> VBOs;
 
-    std::vector<MeshData> mesh_data;
-
     const int SRC_WIDTH = 600;
     static Camera *camera;
 
@@ -80,6 +74,7 @@ private:
     GLint projection_location;
     GLint view_location;
     GLint model_location;
+    Solid *solid;
 };
 
 

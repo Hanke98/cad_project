@@ -5,8 +5,8 @@
 #include "Camera.h"
 
 Camera::Camera() :
-        pos(glm::vec3(0.0f, 1.f, 2.0f)),
-        tar(glm::vec3(0.0f, 1.f, 0.0f)),
+        pos(glm::vec3(0.0f, 0.f, 20.0f)),
+        tar(glm::vec3(0.0f, 0.f, 0.0f)),
         up(glm::vec3(0.0f, 1.0f, 0.0f)),
         last_x(0),
         last_y(0),

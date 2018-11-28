@@ -4,6 +4,7 @@
 
 
 #include "Render.h"
+#include "../Common/Solid.h"
 
 auto *Render::camera = new Camera();
 
@@ -14,7 +15,6 @@ Render::Render() :
     window = nullptr;
     Init();
     InitShader("../../src/glsl/v.gsl", "../../src/glsl/f.gsl");
-    InitFloor();
 }
 
 void Render::Init() {
@@ -130,7 +130,7 @@ GLint Render::Check(GLuint ID) {
     return Result;
 }
 
-void Render::Display(GLuint prog_id) {
+void Render::Display( GLuint prog_id) {
 
     assert(prog_id < program_handles.size());
 
@@ -146,6 +146,7 @@ void Render::Display(GLuint prog_id) {
         glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
         view = camera->ViewMatrix();
         glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(model));
         DrawMesh();
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -154,12 +155,17 @@ void Render::Display(GLuint prog_id) {
 }
 
 void Render::DrawMesh() {
-
-    for (const MeshData &md: mesh_data) {
-        glBindVertexArray(md.getVAO());
-        glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(*md.getModel_matrix_pointer()));
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(md.getNum_of_vertex()));
+    glBindVertexArray(VAOs[0]);
+    const auto &faces = solid->GetFaces();
+    for (const auto &f:faces) {
+        auto *loop = f->getFloops();
+        while (loop) {
+            glDrawArrays(GL_TRIANGLE_FAN, loop->GetIdx(), loop->GetNum_of_he());
+//            std::cout << loop->GetIdx() <<std::endl;
+            loop = loop->getNext_l();
+        }
     }
+    glBindVertexArray(0);
 
 }
 
@@ -206,16 +212,11 @@ bool Render::DisplayOneFrame(GLuint prog_id) {
     glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
     DrawFloor();
-    DrawMesh();
     glfwSwapBuffers(window);
     glfwPollEvents();
     return glfwWindowShouldClose(window) == GL_TRUE;
 }
 
-void Render::InsertMeshData(GLuint _vao, GLuint _vbo, glm::mat4 *_mm_ptr, size_t _num_of_vertex) {
-    MeshData md(_vao, _vbo, _mm_ptr, _num_of_vertex);
-    mesh_data.push_back(md);
-}
 
 void Render::DrawFloor() {
 
@@ -256,12 +257,41 @@ void Render::InitFloor() {
 
 }
 
-void Render::InsertMeshData(MeshData &md) {
-    mesh_data.push_back(md);
+void Render::InitSolidData(const Solid *&solid) {
+    // todo modify here
+    this->solid = const_cast<Solid *>(solid);
+
+    const int num_of_face = solid->getNumOfFaces();
+    const auto &faces = solid->GetFaces();
+    std::vector<GLfloat> vertex_data;
+    for (const auto &f:faces) {
+        auto *loop = f->getFloops();
+        while (loop) {
+            loop->SetIdx(vertex_data.size() / 3);
+            int num_of_he = loop->GetNum_of_he();
+            auto *he = loop->getLedg();
+            for( int i = 0; i < num_of_he; i ++) {
+                vertex_data.push_back(he->getStart_v()->getPos()[0]);
+                vertex_data.push_back(he->getStart_v()->getPos()[1]);
+                vertex_data.push_back(he->getStart_v()->getPos()[2]);
+                he = he->getNext_he();
+            }
+            loop = loop->getNext_l();
+        }
+    }
+
+    GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(GLfloat), &vertex_data[0], GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *) (0 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+
+    VAOs.push_back(vao);
+    VBOs.push_back(vbo);
+
 }
-
-void Render::ClearMeshData() {
-    mesh_data.clear();
-}
-
-

@@ -29,16 +29,19 @@ void Test::TestReadOp(std::string op_path) {
 }
 
 void Test::TestModeling(std::string vtx_path, std::string op_path) {
+    Render render;
     auto *model = new Model();
-
     model->BuildSolid(vtx_path, op_path);
+    auto *solid = model->GetSolid();
+    render.InitSolidData(solid);
+    render.Display();
 
 //    delete(model);
 }
 
 void Test::TestRendering() {
     Render render;
-    render.Display();
+//    render.Display();
 //    render.Init();
 
 //    render.Display();
