@@ -12,9 +12,10 @@ enum {
     MEF,
     KEMR,
     KFMRH,
+    SWEEP,
     OPSIZE
 };
 
-const int OperandsSize[OPSIZE] = {1, 2, 2, 2, 2};
+const int OperandsSize[OPSIZE] = {1, 2, 2, 2, 2, 2};
 
 #endif //CAD_FINAL_OPERANDS_H

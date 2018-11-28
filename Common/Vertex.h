@@ -39,6 +39,8 @@ public:
 
     void PrintPos();
 
+    Eigen::Vector3d operator-(const Vertex *& v2);
+
 private:
     Eigen::Vector3d pos;
     Eigen::Vector3d normal;

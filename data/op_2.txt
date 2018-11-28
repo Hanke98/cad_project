@@ -1,0 +1,36 @@
+11
+mvsf
+0
+mev
+0 1
+mev
+1 2
+mev
+2 3
+mef
+3 0
+mev
+0 4
+kemr
+0 4
+mev
+4 5
+mev
+5 6
+mev
+6 7
+mef
+7 4
+mev
+3 8
+kemr
+3 8
+mev
+8 9
+mev
+9 10
+mev
+10 11
+mef
+11 8
+

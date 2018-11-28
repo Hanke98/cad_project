@@ -30,11 +30,22 @@ public:
 
     void setLface(Face *lface);
 
+    int GetNum_of_he() const;
+
+    void SetNum_of_he(int num_of_he);
+
+    void AddHalfEdge(int num);
+
+    void UpdateLoop();
+
+    void PrintLoop();
+
 private:
     Loop *prev_l;
     Loop *next_l;
     HalfEdge *ledg;
     Face *lface;
+    int num_of_he;
 };
 
 

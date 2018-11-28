@@ -33,7 +33,7 @@ void Test::TestModeling(std::string vtx_path, std::string op_path) {
 
     model->BuildSolid(vtx_path, op_path);
 
-    delete(model);
+//    delete(model);
 }
 
 void Test::TestRendering() {

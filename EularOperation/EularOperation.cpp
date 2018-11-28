@@ -10,7 +10,8 @@ Solid *EularOperation::mvsf(Vertex *&v) {
     auto *loop = new Loop;
     auto *f = new Face();
 
-    solid->setSfaces(f);
+//    solid->setSfaces(f);
+    solid->AddFaces(f);
     f->setFsolid(solid);
     f->setFloops(loop);
     loop->setLface(f);
@@ -32,6 +33,9 @@ HalfEdge *EularOperation::mev(Vertex *&v1, Vertex *&v2, Loop *&l) {
     he1->setWloop(l);
     he2->setWloop(l);
 
+    he1->SetPartner(he2);
+    he2->SetPartner(he1);
+
     he1->setNext_he(he2);
     he2->setPrev_he(he1);
 
@@ -44,20 +48,19 @@ HalfEdge *EularOperation::mev(Vertex *&v1, Vertex *&v2, Loop *&l) {
         while (he->getNext_he()->getStart_v() != v1) {
             he = he->getNext_he();
         }
-//        he->getStart_v()->PrintPos();
-//        he = he->getNext_he();
+
         he1->setPrev_he(he);
         he2->setNext_he(he->getNext_he());
         he->getNext_he()->setPrev_he(he2);
         he->setNext_he(he1);
     }
-
+    l->AddHalfEdge(2);
     return he1;
 }
 
 Face *EularOperation::mef(Vertex *&v1, Vertex *&v2, Loop *&l) {
     auto *face = new Face();
-    auto *loop = new Loop();
+    auto *new_loop = new Loop();
 
     Solid *solid = l->getLface()->getFsolid();
 
@@ -73,8 +76,11 @@ Face *EularOperation::mef(Vertex *&v1, Vertex *&v2, Loop *&l) {
     he1->setEdg(e);
     he2->setEdg(e);
 
+    he1->SetPartner(he2);
+    he2->SetPartner(he1);
+
     he1->setWloop(l);
-    he2->setWloop(loop);
+    he2->setWloop(new_loop);
 
     while (he->getEnd_v() != v1) {
         he = he->getNext_he();
@@ -105,23 +111,17 @@ Face *EularOperation::mef(Vertex *&v1, Vertex *&v2, Loop *&l) {
     he2->setPrev_he(the3);
     the3->setNext_he(he2);
 
-    loop->setLedg(he2);
-    face->setFloops(loop);
+    new_loop->setLedg(he2);
+    new_loop->UpdateLoop();
+    face->AddInnerLoop(new_loop);
+    face->setFsolid(solid);
     solid->AddFaces(face);
+    new_loop->setLface(face);
 
+    l->UpdateLoop();
     l->getLface()->setNext_f(face);
     face->setPrev_f(l->getLface());
 
-    he = l->getLedg();
-    while(he->getNext_he()->getStart_v() != l->getLedg()->getStart_v()) {
-//        he->getStart_v()->PrintPos();
-//        he->getEnd_v()->PrintPos();
-//        std::cout<< "===" << std::endl;
-        he = he->getNext_he();
-    }
-//    he->getStart_v()->PrintPos();
-//    he->getEnd_v()->PrintPos();
-//    std::cout<< "===" << std::endl;
     return face;
 }
 
@@ -134,19 +134,10 @@ Loop *EularOperation::kemr(Vertex *&v1, Vertex *&v2, Loop *&l) {
 
     he = l->getLedg();
     while (!(he->getStart_v() == v1 && he->getEnd_v() == v2)) {
-//        he->getStart_v()->PrintPos();
-//        he->getEnd_v()->PrintPos();
-//        std::cout << "====" << std::endl;
         he = he->getNext_he();
     }
-//    he->getStart_v()->PrintPos();
-//    he->getEnd_v()->PrintPos();
-//    std::cout << "====" << std::endl;
-//    he->getPrev_he()->getStart_v()->PrintPos();
-//    he->getPrev_he()->getEnd_v()->PrintPos();
-//    std::cout << "====" << std::endl;
-    he_a = he;
 
+    he_a = he;
     he = l->getLedg();
     while (!(he->getStart_v() == v2 && he->getEnd_v() == v1)) {
         he = he->getNext_he();
@@ -157,28 +148,55 @@ Loop *EularOperation::kemr(Vertex *&v1, Vertex *&v2, Loop *&l) {
     he_c = he_a->getPrev_he();
     he_d = he_b->getNext_he();
 
-//    he_a->getStart_v()->PrintPos();
-//    he_b->getStart_v()->PrintPos();
-//    he_c->getStart_v()->PrintPos();
-//    he_d->getStart_v()->PrintPos();
-//
-//    std::cout << "=====" << std::endl;
-//
-//    he_a->getEnd_v()->PrintPos();
-//    he_b->getEnd_v()->PrintPos();
-//    he_c->getEnd_v()->PrintPos();
-//    he_d->getEnd_v()->PrintPos();
-
     he_c->setNext_he(he_d);
     he_d->setPrev_he(he_c);
 
     delete he_a;
     delete he_b;
 
-    auto *loop_itr = l;
-    while (loop_itr->getNext_l())
-        loop_itr = loop_itr->getNext_l();
-    loop_itr->setNext_l(new_loop);
+    new_loop->UpdateLoop();
+    l->UpdateLoop();
+    face->AddInnerLoop(new_loop);
 
     return new_loop;
 }
+
+void EularOperation::Sweep(Vertex *&v1, Vertex *&v2, Face *f) {
+    auto *l = f->getFloops();
+    Eigen::Vector3d d = v2->getPos() - v1->getPos();
+    while (l) {
+        int num_of_he = l->GetNum_of_he();
+        auto *he = l->getLedg();
+        auto *v = he->getStart_v();
+        auto *pre_up = new Vertex(v->getPos() + d);
+        auto *partner_loop = he->GetPartner()->getWloop();
+        auto *pre_up_back = pre_up;
+        Vertex *next_v, *new_up;
+        mev(v, pre_up, partner_loop);
+        he = he->getNext_he();
+
+        for (int i = 0; i < num_of_he-1; i++) {
+            next_v = he->getStart_v();
+            new_up = new Vertex(next_v->getPos() + d);
+            partner_loop = he->GetPartner()->getWloop();
+            mev(next_v, new_up, partner_loop);
+//            std::cout << "before mef partner loop:" << std::endl;
+//            partner_loop->PrintLoop();
+
+            auto *new_f = mef(new_up, pre_up, partner_loop);
+//            std::cout << "after mef new loop:" << std::endl;
+//            new_f->getFloops()->PrintLoop();
+//            std::cout << "after mef" << std::endl;
+//            partner_loop->PrintLoop();
+            he = he->getNext_he();
+            pre_up = new_up;
+        }
+        //partner_loop->PrintLoop();
+        mef(pre_up, pre_up_back, partner_loop);
+
+        l = l->getNext_l();
+    }
+
+
+}
+

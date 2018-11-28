@@ -36,6 +36,10 @@ public:
 
     void AddFaces(Face *f);
 
+    int getNumOfFaces();
+
+    const std::vector<Face *> &GetFaces() const;
+
 private:
     Solid *prev_s;
     Solid *next_s;

@@ -54,7 +54,20 @@ void Solid::AddVertex(Vertex *&v) {
 void Solid::AddFaces(Face *f) {
     faces.push_back(f);
     Face * tf = sfaces;
+    if (!tf) {
+        sfaces = f;
+        return;
+    }
+
     while(tf->getNext_f())
         tf = tf->getNext_f();
     tf->setNext_f(f);
+}
+
+int Solid::getNumOfFaces() {
+    return static_cast<int>(faces.size());
+}
+
+const std::vector<Face *> &Solid::GetFaces() const {
+    return faces;
 }

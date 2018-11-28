@@ -41,14 +41,18 @@ public:
 
     Vertex *getEnd_v() const;
 
+    HalfEdge *GetPartner() const;
+
+    void SetPartner(HalfEdge *partner);
+
 private:
     HalfEdge *next_he;
     HalfEdge *prev_he;
+    HalfEdge *partner;
     Edge *edg;
     Loop *wloop;
     Vertex *start_v;
     Vertex *end_v;
-
 };
 
 

@@ -9,6 +9,7 @@
 HalfEdge::HalfEdge() :
         next_he(nullptr),
         prev_he(nullptr),
+        partner(nullptr),
         wloop(nullptr),
         edg(nullptr),
         start_v(nullptr)
@@ -69,4 +70,12 @@ HalfEdge::HalfEdge(Vertex *vtx, Vertex *end_v) :
 
 Vertex *HalfEdge::getEnd_v() const {
     return end_v;
+}
+
+HalfEdge *HalfEdge::GetPartner() const {
+    return partner;
+}
+
+void HalfEdge::SetPartner(HalfEdge *partner) {
+    HalfEdge::partner = partner;
 }

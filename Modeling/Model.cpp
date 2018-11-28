@@ -16,6 +16,7 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
     if (operands_order[0] != MVSF) {
         std::cout << "error! the first operator has to be mvsf" << std::endl;
     }
+    int i = 0;
     for (auto &op: operands_order) {
         if (op == MVSF) {
             Vertex *v = vertexes[operands_q[0]];
@@ -50,6 +51,14 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
             operands_q.pop_front();
             continue;
         }
+        if (op == SWEEP) {
+            Vertex *v0 = vertexes[operands_q[0]];
+            Vertex *v1 = vertexes[operands_q[1]];
+            EularOperation::Sweep(v0, v1, solid->getSfaces());
+            operands_q.pop_front();
+            operands_q.pop_front();
+            continue;
+        }
 
 
     }
@@ -59,16 +68,26 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
         return;
     }
 
-    loop = solid->getSfaces()->getFloops();
-    while (loop) {
-        he = loop->getLedg();
-        while (he->getNext_he() != loop->getLedg()) {
-            he->getStart_v()->PrintPos();
-            he = he->getNext_he();
+    int num_of_face = solid->getNumOfFaces();
+    auto face_vector = solid->GetFaces();
+    for( int face_order =0 ;face_order < num_of_face; face_order ++) {
+        std::cout << "face " << face_order << ": " << std::endl;
+        auto *cur_face = face_vector[face_order];
+        loop = cur_face->getFloops();
+        while (loop) {
+            he = loop->getLedg();
+            int i = 0;
+            while (i < loop->GetNum_of_he()) {
+                assert(he);
+                std::cout << "he " << ++i << ": " <<  std::endl;
+                he->getStart_v()->PrintPos();
+                he->getEnd_v()->PrintPos();
+                he = he->getNext_he();
+            }
+            loop = loop->getNext_l();
+            std::cout << "\n";
         }
-//        std::cout << "\n";
-        he->getStart_v()->PrintPos();
-        loop = loop->getNext_l();
-        std::cout << "\n";
+        std::cout << "=========\n";
     }
+
 }

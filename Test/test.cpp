@@ -9,7 +9,7 @@ int main() {
     Test test;
 //    test.TestReadVertex("../../src/data/v.txt");
 //    test.TestReadOp("../../src/data/op.txt");
-    test.TestModeling("../../src/data/v.txt", "../../src/data/op.txt");
+    test.TestModeling("../../src/data/v_2.txt", "../../src/data/op_3.txt");
 //    test.TestRendering();
     return 0;
 }

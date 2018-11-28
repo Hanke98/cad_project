@@ -88,3 +88,7 @@ void Vertex::AddNewVertex(const double &x, const double &y, const double &z) {
 void Vertex::PrintPos() {
     std::cout << pos[0] << ", " << pos[1] <<", " <<pos[2]<<std::endl;
 }
+
+Eigen::Vector3d Vertex::operator-(const Vertex *&v2) {
+    return pos - v2->getPos();
+}
