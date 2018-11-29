@@ -48,6 +48,8 @@ void Render::Init() {
     glfwSetCursorPosCallback(window, MouseFunc);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     projection = glm::perspective(glm::radians(60.0f), 1.0f, 0.1f, 500.0f);
 
@@ -142,7 +144,7 @@ void Render::Display( GLuint prog_id) {
     do {
         glUseProgram(ProgramID);
         ProcessInput();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
         view = camera->ViewMatrix();
         glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
@@ -158,12 +160,26 @@ void Render::DrawMesh() {
     glBindVertexArray(VAOs[0]);
     const auto &faces = solid->GetFaces();
     for (const auto &f:faces) {
-        auto *loop = f->getFloops();
+        auto *loop = f->getFloops()->getNext_l();
         while (loop) {
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            glDepthMask(GL_FALSE);
+            glStencilMask(0xFF);
+
             glDrawArrays(GL_TRIANGLE_FAN, loop->GetIdx(), loop->GetNum_of_he());
-//            std::cout << loop->GetIdx() <<std::endl;
             loop = loop->getNext_l();
         }
+
+        loop = f->getFloops();
+        glStencilFunc(GL_EQUAL, 0, 0xFF);
+        glDepthMask(GL_TRUE);
+        glStencilOp(GL_ZERO, GL_KEEP, GL_KEEP);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDrawArrays(GL_TRIANGLE_FAN, loop->GetIdx(), loop->GetNum_of_he());
+
+        glStencilMask(0xFF);
     }
     glBindVertexArray(0);
 

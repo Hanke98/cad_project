@@ -164,6 +164,8 @@ Loop *EularOperation::kemr(Vertex *&v1, Vertex *&v2, Loop *&l) {
 void EularOperation::Sweep(Vertex *&v1, Vertex *&v2, Face *f) {
     auto *l = f->getFloops();
     Eigen::Vector3d d = v2->getPos() - v1->getPos();
+    Face *bottom_face = nullptr;
+    bool out_loop = true;
     while (l) {
         int num_of_he = l->GetNum_of_he();
         auto *he = l->getLedg();
@@ -175,7 +177,7 @@ void EularOperation::Sweep(Vertex *&v1, Vertex *&v2, Face *f) {
         mev(v, pre_up, partner_loop);
         he = he->getNext_he();
 
-        for (int i = 0; i < num_of_he-1; i++) {
+        for (int i = 0; i < num_of_he - 1; i++) {
             next_v = he->getStart_v();
             new_up = new Vertex(next_v->getPos() + d);
             partner_loop = he->GetPartner()->getWloop();
@@ -184,11 +186,27 @@ void EularOperation::Sweep(Vertex *&v1, Vertex *&v2, Face *f) {
             he = he->getNext_he();
             pre_up = new_up;
         }
-        mef(pre_up, pre_up_back, partner_loop);
-
+        if (!out_loop) {
+            auto *f2 = mef(pre_up, pre_up_back, partner_loop);
+            kfmrh(bottom_face,f2);
+        } else {
+            bottom_face = mef(pre_up, pre_up_back, partner_loop);
+        }
         l = l->getNext_l();
+        out_loop = false;
     }
 
 
+}
+
+Loop *EularOperation::kfmrh(Face *f1, Face *f2) {
+
+    auto *lp = f2->getFloops();
+
+    f1->AddInnerLoop(lp);
+    auto *solid = f1->getFsolid();
+    solid->RemoveFace(f2);
+
+    return nullptr;
 }
 

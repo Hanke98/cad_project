@@ -38,7 +38,6 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
             Vertex *v0 = vertexes[operands_q[0]];
             Vertex *v1 = vertexes[operands_q[1]];
             Face *face = EularOperation::mef(v0, v1, loop);
-            // todo add face to solid;
             operands_q.pop_front();
             operands_q.pop_front();
             continue;

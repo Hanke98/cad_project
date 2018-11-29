@@ -4,12 +4,11 @@
 
 #include "Solid.h"
 
-Solid::Solid():
-    prev_s(nullptr),
-    next_s(nullptr),
-    sfaces(nullptr),
-    sedges(nullptr)
-{}
+Solid::Solid() :
+        prev_s(nullptr),
+        next_s(nullptr),
+        sfaces(nullptr),
+        sedges(nullptr) {}
 
 Solid::~Solid() {
 
@@ -53,13 +52,13 @@ void Solid::AddVertex(Vertex *&v) {
 
 void Solid::AddFaces(Face *f) {
     faces.push_back(f);
-    Face * tf = sfaces;
+    Face *tf = sfaces;
     if (!tf) {
         sfaces = f;
         return;
     }
 
-    while(tf->getNext_f())
+    while (tf->getNext_f())
         tf = tf->getNext_f();
     tf->setNext_f(f);
 }
@@ -70,4 +69,14 @@ int Solid::getNumOfFaces() const {
 
 const std::vector<Face *> &Solid::GetFaces() const {
     return faces;
+}
+
+void Solid::RemoveFace(Face *f) {
+    for (auto itr = faces.begin(); itr != faces.end(); itr++) {
+        if (*itr == f) {
+            std::cout << *itr << ", " << f <<std::endl;
+            faces.erase(itr);
+            return;
+        }
+    }
 }

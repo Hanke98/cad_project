@@ -35,7 +35,6 @@ public:
     void SetNum_of_inner_loop(int num_of_inner_loop);
 
     void AddInnerLoop(Loop *&l);
-
 private:
     Face *prev_f;
     Face *next_f;

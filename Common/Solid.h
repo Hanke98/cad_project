@@ -7,6 +7,7 @@
 
 #include "Face.h"
 #include <vector>
+#include <iostream>
 
 
 class Solid {
@@ -39,6 +40,8 @@ public:
     int getNumOfFaces() const;
 
     const std::vector<Face *> &GetFaces() const;
+
+    void RemoveFace(Face * f);
 
 private:
     Solid *prev_s;
