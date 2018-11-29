@@ -131,7 +131,7 @@ Loop *EularOperation::kemr(Vertex *&v1, Vertex *&v2, Loop *&l) {
     HalfEdge *he, *he_a, *he_b, *he_c, *he_d;
 
     new_loop->setLface(face);
-
+    l->PrintLoop();
     he = l->getLedg();
     while (!(he->getStart_v() == v1 && he->getEnd_v() == v2)) {
         he = he->getNext_he();

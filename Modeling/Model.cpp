@@ -13,11 +13,14 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
 //    solid = nullptr;
     Loop *loop = nullptr;
     HalfEdge *he = nullptr;
+//    Face *bottom = nullptr;
+//    bool is_bottom = true;
     if (operands_order[0] != MVSF) {
         std::cout << "error! the first operator has to be mvsf" << std::endl;
     }
     int i = 0;
     for (auto &op: operands_order) {
+        i++;
         if (op == MVSF) {
             Vertex *v = vertexes[operands_q[0]];
             solid = EularOperation::mvsf(v);
@@ -29,6 +32,9 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
         if (op == MEV) {
             Vertex *v0 = vertexes[operands_q[0]];
             Vertex *v1 = vertexes[operands_q[1]];
+            if (operands_order[i]==KEMR) {
+                loop = solid->getSfaces()->getFloops();
+            }
             he = EularOperation::mev(v0, v1, loop);
             operands_q.pop_front();
             operands_q.pop_front();
@@ -45,7 +51,8 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
         if (op == KEMR) {
             Vertex *v0 = vertexes[operands_q[0]];
             Vertex *v1 = vertexes[operands_q[1]];
-            loop = EularOperation::kemr(v0, v1, loop);
+            auto *bottom_loop = solid->getSfaces()->getFloops();
+            loop = EularOperation::kemr(v0, v1, bottom_loop);
             operands_q.pop_front();
             operands_q.pop_front();
             continue;
@@ -58,7 +65,6 @@ void Model::BuildSolid(std::string vtx_path, std::string op_path) {
             operands_q.pop_front();
             continue;
         }
-
 
     }
 
